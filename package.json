@@ -1,0 +1,25 @@
+{
+  "name": "shopper-backend",
+  "version": "1.0.0",
+  "description": "NodeJs backend for shopping list application. Includes Postgre db via docker image.",
+  "main": "index.js",
+  "dependencies": {
+    "express": "^4.16.2",
+    "winston": "^2.4.0"
+  },
+  "devDependencies": {},
+  "scripts": {
+    "start": "node index.js",
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/juhanitapaninen/shopper-backend.git"
+  },
+  "author": "Juhani Tapaninen",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/juhanitapaninen/shopper-backend/issues"
+  },
+  "homepage": "https://github.com/juhanitapaninen/shopper-backend#readme"
+}
