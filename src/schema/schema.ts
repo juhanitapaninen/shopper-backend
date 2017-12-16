@@ -1,11 +1,11 @@
 import {
-  GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLList, GraphQLSchema
+  GraphQLObjectType, GraphQLInt, GraphQLString, GraphQLList, GraphQLSchema, GraphQLType
 } from "graphql";
 import { ShoppingList } from "../entity/ShoppingList";
 
 const Int = { type: GraphQLInt };
 const String = { type: GraphQLString };
-const List = (type: string) => new GraphQLList(type);
+const List = (type: GraphQLType) => new GraphQLList(type);
 
 const ShoppingListType: any = new GraphQLObjectType({
   name: "ShoppingList",
