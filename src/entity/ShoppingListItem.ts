@@ -17,7 +17,9 @@ export class ShoppingListItem extends BaseEntity {
   @ManyToOne(type => ShoppingList, shoppingList => shoppingList.items)
   shoppingList: ShoppingList;
 
-  @ManyToOne(type => Item, item => item.shoppingListItems)
+  @ManyToOne(type => Item, item => item.shoppingListItems, {
+    eager: true
+  })
   item: Item;
 
 }
