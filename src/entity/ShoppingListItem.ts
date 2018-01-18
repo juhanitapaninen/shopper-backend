@@ -14,6 +14,18 @@ export class ShoppingListItem extends BaseEntity {
   @Column("varchar", {length: 500})
   url?: string;
 
+  @Column("varchar", {length: 500})
+  comment?: string;
+
+  @Column("integer")
+  price?: number;
+
+  @Column("integer")
+  completed: boolean;
+
+  @Column("integer")
+  rejected: boolean;
+
   @ManyToOne(type => ShoppingList, shoppingList => shoppingList.items)
   shoppingList: ShoppingList;
 

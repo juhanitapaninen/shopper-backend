@@ -1,5 +1,6 @@
-import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
+import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany, ManyToOne } from "typeorm";
 import { ShoppingListItem } from "./ShoppingListItem";
+import { ItemType } from "./ItemType";
 
 @Entity()
 export class Item extends BaseEntity {
@@ -7,13 +8,21 @@ export class Item extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("varchar", {length: 50})
+  @Column("varchar", {length: 50, unique: true})
   name: string;
 
-  @Column("varchar", {length: 50})
-  type: string;
+  @ManyToOne(type => ItemType, type => type.items, {
+    eager: true
+  })
+  type: ItemType;
 
   @OneToMany(type => ShoppingListItem, shoppingListItem => shoppingListItem.item)
   shoppingListItems: ShoppingListItem[];
 
+  static createNew(name: string, itemType: ItemType) {
+    const item = new Item();
+    item.name = name;
+    item.type = itemType;
+    return item.save();
+  }
 }
