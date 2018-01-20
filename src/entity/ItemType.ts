@@ -1,5 +1,5 @@
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
-import { Item } from "./Item";
+import { Item } from "../entity";
 import * as S from "sanctuary";
 
 @Entity()
@@ -26,6 +26,7 @@ export class ItemType extends BaseEntity {
       type.name = name;
       return await type.save();
     }
+    return type;
   }
   static async delete(id: number) {
     const itemType = await ItemType.findOneById(id);
