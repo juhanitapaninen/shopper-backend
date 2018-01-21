@@ -1,5 +1,6 @@
 import { Int, List, String } from "../scalars";
-import { City, Item, ItemType, ShoppingList } from "../../entity";
+import { ShoppingList } from "../../entity/ShoppingList";
+import { Item, ItemType, City } from "../../entity";
 import { CitySchemaType, ShoppingListSchemaType, ItemSchemaType, ItemTypeSchemaType } from "../types";
 import { GraphQLObjectType } from "graphql";
 

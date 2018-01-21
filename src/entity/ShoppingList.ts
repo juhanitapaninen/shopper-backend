@@ -7,17 +7,17 @@ export class ShoppingList extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("varchar", {length: 100})
-  name: string;
+  @Column("varchar", {length: 100, nullable: true})
+  name?: string;
 
   @Column("date")
   created: Date;
 
-  @Column("date")
-  target: Date;
+  @Column("date", { nullable: true })
+  target?: Date;
 
-  @Column("date")
-  completed: Date;
+  @Column("date", { nullable: true })
+  completed?: Date;
 
   @ManyToOne(type => City, city => city.shopping_lists, {
     eager: true
@@ -34,4 +34,15 @@ export class ShoppingList extends BaseEntity {
   })
   items: ShoppingListItem[];
 
+  static createNew(name: string, city: City, shoppingListType: ShoppingListType, target: Date) {
+    const shoppingList = new ShoppingList();
+    shoppingList.name = name;
+    shoppingList.city = city;
+    shoppingList.type = shoppingListType;
+    if (target) {
+      shoppingList.target = target;
+    }
+    shoppingList.created = new Date();
+    return shoppingList.save();
+  }
 }
