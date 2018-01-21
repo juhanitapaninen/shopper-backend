@@ -1,6 +1,6 @@
 import { BaseEntity, Entity, Column, PrimaryGeneratedColumn, OneToMany } from "typeorm";
 import { Item } from "../entity";
-import * as S from "sanctuary";
+import { findOrCreate } from "./utils";
 
 @Entity()
 export class ItemType extends BaseEntity {
@@ -20,13 +20,7 @@ export class ItemType extends BaseEntity {
     return itemType.save();
   }
   static async findOrCreate(name: string) {
-    const maybeType: S.Maybe<ItemType> = S.head(await ItemType.find({ where: {name} }));
-    const type = S.fromMaybe(new ItemType())(maybeType);
-    if (maybeType === S.Nothing) {
-      type.name = name;
-      return await type.save();
-    }
-    return type;
+    return findOrCreate(name, ItemType);
   }
   static async delete(id: number) {
     const itemType = await ItemType.findOneById(id);
