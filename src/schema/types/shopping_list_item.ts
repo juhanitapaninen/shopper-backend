@@ -1,4 +1,4 @@
-import { Int, String } from "../scalars";
+import { Int, String, Boolean } from "../scalars";
 import { ItemSchemaType, ShoppingListSchemaType } from "../types";
 import { ShoppingListItem } from "../../entity";
 import { GraphQLObjectType } from "graphql";
@@ -9,6 +9,10 @@ export const ShoppingListItemSchemaType: any = new GraphQLObjectType({
     id: Int,
     name: String,
     url: String,
+    comment: String,
+    price: Int,
+    completed: Boolean,
+    rejected: Boolean,
     shoppingList: {
       type: ShoppingListSchemaType
     },

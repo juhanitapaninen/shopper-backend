@@ -1,4 +1,4 @@
-import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString, GraphQLType } from "graphql";
+import { GraphQLInt, GraphQLList, GraphQLNonNull, GraphQLString, GraphQLBoolean, GraphQLType } from "graphql";
 const {GraphQLDate} = require("graphql-iso-date");
 
 const Int = { type: GraphQLInt };
@@ -7,5 +7,6 @@ const String = { type: GraphQLString };
 const NonNullString = { type: new GraphQLNonNull(GraphQLString) };
 const List = (type: GraphQLType) => new GraphQLList(type);
 const Date = { type: GraphQLDate };
+const Boolean = { type: GraphQLBoolean };
 
-export {Int, NonNullInt, String, NonNullString, List, Date};
+export {Int, NonNullInt, String, NonNullString, List, Date, Boolean};

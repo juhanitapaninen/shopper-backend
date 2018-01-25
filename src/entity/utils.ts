@@ -8,4 +8,5 @@ export const findOrCreate = async (name: string, entityType: any) => {
     type.name = name;
     return await type.save();
   }
+  return type;
 };

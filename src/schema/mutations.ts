@@ -1,9 +1,9 @@
 import { City } from "../entity/City";
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLInt } from "graphql";
-import { Item, ItemType, ShoppingListType } from "../entity";
+import { Item, ItemType, ShoppingListType, ShoppingListItem } from "../entity";
 import { ShoppingList } from "../entity/ShoppingList";
-import { Int, NonNullInt, String, NonNullString, Date } from "./scalars";
-import { ItemSchemaType, ItemTypeSchemaType, ShoppingListSchemaType } from "./types";
+import { Int, NonNullInt, String, NonNullString, Date, Boolean } from "./scalars";
+import { ItemSchemaType, ItemTypeSchemaType, ShoppingListItemSchemaType, ShoppingListSchemaType } from "./types";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -44,6 +44,27 @@ export const mutation = new GraphQLObjectType({
           await ShoppingListType.findOrCreate(typeName),
           target
         )
+    },
+    addShoppingListItem: {
+      type: ShoppingListItemSchemaType,
+      args: { shoppingListId: NonNullInt, itemId: NonNullInt, name: String, comment: String, price: Int, url: String },
+      resolve: async (parentValue, args) =>
+        await ShoppingListItem.createNew(
+          await ShoppingList.findOneById(args.shoppingListId),
+          await Item.findOneById(args.itemId),
+          args.name,
+          args.comment,
+          args.price,
+          args.url
+        )
+    },
+    updateShoppingListItem: {
+      type: ShoppingListItemSchemaType,
+      args: { id: NonNullInt, completed: Boolean, rejected: Boolean, name: String, comment: String, price: Int, url: String },
+      resolve: async (parentValue, {id, completed, rejected, name, comment, price, url}) =>
+        await ShoppingListItem.updateById(id, {
+          completed, rejected, name, comment, price, url
+        })
     }
   }
 });
