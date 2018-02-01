@@ -48,7 +48,8 @@ export class ShoppingListItem extends BaseEntity {
     const shoppingListItem = new ShoppingListItem();
    shoppingListItem.shoppingList = shoppingList;
    shoppingListItem.item = item;
-   shoppingListItem.name = name;shoppingListItem.comment = comment;
+   shoppingListItem.name = name;
+   shoppingListItem.comment = comment;
    shoppingListItem.price = price;
    shoppingListItem.url = url;
    return shoppingListItem.save();

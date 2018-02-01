@@ -4,6 +4,7 @@ import * as bodyParser from "body-parser";
 import * as winston from "winston";
 import * as logger from "morgan";
 import * as lusca from "lusca";
+import * as cors from "cors";
 import * as errorHandler from "errorhandler";
 import { createConnection } from "typeorm";
 import * as homeController from "./controllers/home";
@@ -18,6 +19,7 @@ createConnection().then(async connection => {
   app.use(logger("dev"));
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({extended: true}));
+  app.use(cors());
   app.use(lusca.xframe("SAMEORIGIN"));
   app.use(lusca.xssProtection(true));
 
