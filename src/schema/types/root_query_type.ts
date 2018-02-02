@@ -3,6 +3,7 @@ import { ShoppingList } from "../../entity/ShoppingList";
 import { Item, ItemType, City } from "../../entity";
 import { CitySchemaType, ShoppingListSchemaType, ItemSchemaType, ItemTypeSchemaType } from "../types";
 import { GraphQLObjectType } from "graphql";
+import * as S from "sanctuary";
 
 export const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
@@ -14,6 +15,13 @@ export const RootQuery = new GraphQLObjectType({
       },
       resolve: async (parentValue, args) =>
         await ShoppingList.find(args && { where: {...args} })
+    },
+    nextShoppingList: {
+      type: ShoppingListSchemaType,
+      resolve: async () => S.pipe([
+        S.head,
+        S.fromMaybe({})
+      ])(await ShoppingList.find({ order: {"target": "ASC"} }))
     },
     itemTypes: {
       type: List(ItemTypeSchemaType),
