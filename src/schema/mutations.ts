@@ -47,12 +47,11 @@ export const mutation = new GraphQLObjectType({
     },
     addShoppingListItem: {
       type: ShoppingListItemSchemaType,
-      args: { shoppingListId: NonNullInt, itemId: NonNullInt, name: String, comment: String, price: Int, url: String },
+      args: { shoppingListId: NonNullInt, itemId: NonNullInt, comment: String, price: Int, url: String },
       resolve: async (parentValue, args) =>
         await ShoppingListItem.createNew(
           await ShoppingList.findOneById(args.shoppingListId),
           await Item.findOneById(args.itemId),
-          args.name,
           args.comment,
           args.price,
           args.url
@@ -60,10 +59,10 @@ export const mutation = new GraphQLObjectType({
     },
     updateShoppingListItem: {
       type: ShoppingListItemSchemaType,
-      args: { id: NonNullInt, completed: Boolean, rejected: Boolean, name: String, comment: String, price: Int, url: String },
+      args: { id: NonNullInt, completed: Boolean, rejected: Boolean, comment: String, price: Int, url: String },
       resolve: async (parentValue, {id, completed, rejected, name, comment, price, url}) =>
         await ShoppingListItem.updateById(id, {
-          completed, rejected, name, comment, price, url
+          completed, rejected, comment, price, url
         })
     }
   }

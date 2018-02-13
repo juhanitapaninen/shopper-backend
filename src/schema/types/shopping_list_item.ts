@@ -7,7 +7,6 @@ export const ShoppingListItemSchemaType: any = new GraphQLObjectType({
   name: "ShoppingListItem",
   fields: () => ({
     id: Int,
-    name: String,
     url: String,
     comment: String,
     price: Int,

@@ -17,9 +17,6 @@ export class ShoppingListItem extends BaseEntity {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column("varchar", {length: 100, nullable: true})
-  name?: string;
-
   @Column("varchar", {length: 500, nullable: true})
   url?: string;
 
@@ -44,11 +41,10 @@ export class ShoppingListItem extends BaseEntity {
   })
   item: Item;
 
-  static createNew(shoppingList: ShoppingList, item: Item, name: string, comment: string, price: number, url: string) {
+  static createNew(shoppingList: ShoppingList, item: Item, comment: string, price: number, url: string) {
     const shoppingListItem = new ShoppingListItem();
    shoppingListItem.shoppingList = shoppingList;
    shoppingListItem.item = item;
-   shoppingListItem.name = name;
    shoppingListItem.comment = comment;
    shoppingListItem.price = price;
    shoppingListItem.url = url;
