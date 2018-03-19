@@ -1,11 +1,11 @@
-import { Int, List, String } from "../scalars";
+import { Int, List, String, ID } from "../scalars";
 import { ShoppingListItemSchemaType, CitySchemaType, ItemSchemaType } from "../types";
 import { GraphQLObjectType } from "graphql";
 
 export const ShoppingListSchemaType: any = new GraphQLObjectType({
   name: "ShoppingList",
   fields: () => ({
-    id: Int,
+    id: ID,
     name: String,
     created: String,
     target: String,

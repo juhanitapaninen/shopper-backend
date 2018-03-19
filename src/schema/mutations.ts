@@ -2,7 +2,7 @@ import { City } from "../entity/City";
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLInt } from "graphql";
 import { Item, ItemType, ShoppingListType, ShoppingListItem } from "../entity";
 import { ShoppingList } from "../entity/ShoppingList";
-import { Int, NonNullInt, String, NonNullString, Date, Boolean } from "./scalars";
+import { Int, NonNullInt, String, NonNullString, Date, Boolean, NonNullID } from "./scalars";
 import { ItemSchemaType, ItemTypeSchemaType, ShoppingListItemSchemaType, ShoppingListSchemaType } from "./types";
 
 export const mutation = new GraphQLObjectType({
@@ -47,7 +47,7 @@ export const mutation = new GraphQLObjectType({
     },
     addShoppingListItem: {
       type: ShoppingListItemSchemaType,
-      args: { shoppingListId: NonNullInt, itemId: NonNullInt, comment: String, price: Int, url: String },
+      args: { shoppingListId: NonNullID, itemId: NonNullInt, comment: String, price: Int, url: String },
       resolve: async (parentValue, args) =>
         await ShoppingListItem.createNew(
           await ShoppingList.findOneById(args.shoppingListId),
@@ -59,11 +59,17 @@ export const mutation = new GraphQLObjectType({
     },
     updateShoppingListItem: {
       type: ShoppingListItemSchemaType,
-      args: { id: NonNullInt, completed: Boolean, rejected: Boolean, comment: String, price: Int, url: String },
-      resolve: async (parentValue, {id, completed, rejected, name, comment, price, url}) =>
-        await ShoppingListItem.updateById(id, {
-          completed, rejected, comment, price, url
-        })
+      args: { id: NonNullID, completed: Boolean, rejected: Boolean, comment: String, price: Int, url: String },
+      resolve: async (parentValue, {id, completed, rejected, comment, price, url}) => {
+        const item = await ShoppingListItem.findOneById(id);
+        item.completed = !!completed;
+        item.rejected = !!rejected;
+        item.comment = comment;
+        item.price = price;
+        item.url = url;
+        await item.save();
+        return item;
+      }
     }
   }
 });

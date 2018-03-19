@@ -18,10 +18,15 @@ export const RootQuery = new GraphQLObjectType({
     },
     nextShoppingList: {
       type: ShoppingListSchemaType,
-      resolve: async () => S.pipe([
-        S.head,
-        S.fromMaybe({})
-      ])(await ShoppingList.find({ order: {"target": "ASC"} }))
+      resolve: async () => {
+        const shoppingList = S.pipe([
+          S.head,
+          S.fromMaybe({})
+        ])(await ShoppingList.find({order: {"target": "ASC"}}));
+
+        console.log(shoppingList);
+        return shoppingList;
+      }
     },
     itemTypes: {
       type: List(ItemTypeSchemaType),
