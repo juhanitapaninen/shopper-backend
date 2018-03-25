@@ -1,9 +1,12 @@
 import { City } from "../entity/City";
 import { GraphQLNonNull, GraphQLObjectType, GraphQLString, GraphQLInt } from "graphql";
+import * as bcrypt from "bcrypt";
+import * as jwt from "jsonwebtoken";
 import { Item, ItemType, ShoppingListType, ShoppingListItem } from "../entity";
 import { ShoppingList } from "../entity/ShoppingList";
+import { User } from "../entity/User";
 import { Int, NonNullInt, String, NonNullString, Date, Boolean, NonNullID } from "./scalars";
-import { ItemSchemaType, ItemTypeSchemaType, ShoppingListItemSchemaType, ShoppingListSchemaType } from "./types";
+import { ItemSchemaType, ItemTypeSchemaType, ShoppingListItemSchemaType, ShoppingListSchemaType, UserSchemaType } from "./types";
 
 export const mutation = new GraphQLObjectType({
   name: "Mutation",
@@ -70,6 +73,48 @@ export const mutation = new GraphQLObjectType({
         await item.save();
         return item;
       }
-    }
+    },
+    login: {
+      type: UserSchemaType,
+      args: { email: NonNullString, password: NonNullString },
+      resolve: async (parentValue, { email, password }, ctx) => {
+        const user = await User.find({where: {email}});
+        if (user.length > 0) {
+          const res = await bcrypt.compare(password, user[0].password);
+          if (res) {
+            const {id, email} = user[0];
+            const token = jwt.sign({id, email}, process.env.JWT_SECRET);
+            ctx.jwt = token;
+            ctx.user = user;
+            return ({
+              ...user[0],
+              jwt: token
+            });
+          }
+          return Promise.reject("Incorrect email or password");
+        }
+        return Promise.reject("Incorrect email or password");
+      }
+    },
+    signUp: {
+      type: UserSchemaType,
+      args: { username: NonNullString, email: NonNullString, password: NonNullString },
+      resolve: async (parentValue, { username, email, password }, ctx) => {
+        const user = await User.find({where: {email}});
+        if (user.length === 0) {
+          const hash = await bcrypt.hash(password, 10);
+          const newUser = await User.createNew(username, email, hash);
+          const { id } = newUser;
+          const token = jwt.sign({ id, email }, process.env.JWT_SECRET, { expiresIn: "1d" });
+          ctx.jwt = token;
+          ctx.user = newUser;
+          return ({
+            ...newUser,
+            jwt: token
+          });
+        }
+        return Promise.reject("Email already exists");
+      }
+    },
   }
 });

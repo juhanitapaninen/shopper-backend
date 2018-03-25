@@ -38,7 +38,10 @@ export const RootQuery = new GraphQLObjectType({
     },
     items: {
       type: List(ItemSchemaType),
-      resolve: async () => await Item.find()
+      resolve: async (parentValue, args, ctx) => {
+        const user = await ctx.user;
+        return await Item.find();
+      }
     }
   })
 });

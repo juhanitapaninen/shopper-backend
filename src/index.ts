@@ -5,11 +5,16 @@ import * as winston from "winston";
 import * as logger from "morgan";
 import * as lusca from "lusca";
 import * as cors from "cors";
+import * as jwt from "express-jwt";
+import * as dotEnv from "dotenv";
 import * as errorHandler from "errorhandler";
 import { createConnection } from "typeorm";
 import * as homeController from "./controllers/home";
 import * as shoppingListController from "./controllers/ShoppingList";
+import { User } from "./entity/User";
 import schema from "./schema/schema";
+
+dotEnv.config();
 
 createConnection().then(async connection => {
 
@@ -23,10 +28,17 @@ createConnection().then(async connection => {
   app.use(lusca.xframe("SAMEORIGIN"));
   app.use(lusca.xssProtection(true));
 
-  app.use("/graphql", expressGraphQL({
-    schema,
-    graphiql: true // TODO: Set only on DEV mode
-  }));
+  app.use(
+    "/graphql",
+    jwt({secret: process.env.JWT_SECRET, credentialsRequired: false}),
+    expressGraphQL(async req => ({
+      schema,
+      graphiql: true, // TODO: Set only on DEV mode
+      context: {
+        user: req.user,
+      },
+    }))
+  );
 
   app.get("/", homeController.index);
   app.get("/lists", shoppingListController.shoppingListGetAll);
