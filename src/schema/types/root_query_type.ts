@@ -2,46 +2,47 @@ import { Int, List, String } from "../scalars";
 import { ShoppingList } from "../../entity/ShoppingList";
 import { Item, ItemType, City } from "../../entity";
 import { CitySchemaType, ShoppingListSchemaType, ItemSchemaType, ItemTypeSchemaType } from "../types";
-import { GraphQLObjectType } from "graphql";
+import { GraphQLObjectType, GraphQLFieldResolver } from "graphql";
 import * as S from "sanctuary";
+
+const authenticate = (fn: GraphQLFieldResolver<any, any>) => (parent: any, args: any, context: any, info: any) => {
+  if (!context.user) throw new Error("User is not authenticated");
+  return fn(parent, args, context, info);
+};
+
+const getShoppingList = async (parent: any, args: any) =>
+  await ShoppingList.find(args && { where: {...args} });
+const getNextShoppingList = async () => S.pipe([
+    S.head,
+    S.fromMaybe({})
+  ])(await ShoppingList.find({order: {"target": "ASC"}}));
+const getItemTypes = async () => await ItemType.find();
+const getCities = async () => await City.find();
+const getItems = async () => await Item.find();
 
 export const RootQuery = new GraphQLObjectType({
   name: "RootQueryType",
   fields: () => ({
     shoppingList: {
       type: List(ShoppingListSchemaType),
-      args: {
-        id: Int, name: String, created: String, target: String, completed: String, type: String
-      },
-      resolve: async (parentValue, args) =>
-        await ShoppingList.find(args && { where: {...args} })
+      args: { id: Int, name: String, created: String, target: String, completed: String, type: String },
+      resolve: authenticate(getShoppingList)
     },
     nextShoppingList: {
       type: ShoppingListSchemaType,
-      resolve: async () => {
-        const shoppingList = S.pipe([
-          S.head,
-          S.fromMaybe({})
-        ])(await ShoppingList.find({order: {"target": "ASC"}}));
-
-        console.log(shoppingList);
-        return shoppingList;
-      }
+      resolve: authenticate(getNextShoppingList)
     },
     itemTypes: {
       type: List(ItemTypeSchemaType),
-      resolve: async () => await ItemType.find()
+      resolve: authenticate(getItemTypes)
     },
     cities: {
       type: List(CitySchemaType),
-      resolve: async () => await City.find()
+      resolve: authenticate(getCities)
     },
     items: {
       type: List(ItemSchemaType),
-      resolve: async (parentValue, args, ctx) => {
-        const user = await ctx.user;
-        return await Item.find();
-      }
+      resolve: authenticate(getItems)
     }
   })
 });

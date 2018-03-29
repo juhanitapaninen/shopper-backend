@@ -37,6 +37,7 @@ createConnection().then(async connection => {
       context: {
         user: req.user,
       },
+      formatError: (err: any) => ({ message: err.message, status: err.status }),
     }))
   );
 
